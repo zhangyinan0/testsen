@@ -1,0 +1,22 @@
+
+@Configuration
+@EnableWebSocket
+public class WebSocketConfig extends WebMvcConfigurerAdapter implements
+        WebSocketConfigurer {
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    @Override
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        registry.addHandler(babQuoteWebSocketHandler(), "/websck/babquote").setAllowedOrigins("*").addInterceptors(new HandshakeInterceptor());
+        registry.addHandler(babQuoteWebSocketHandler(), "/sockjs/websck/babquote").addInterceptors(new HandshakeInterceptor())
+                .setAllowedOrigins("*")
+                .withSockJS();
+
+        LogStashFormatUtil.logInfo(logger,"启动时 WebSocket 注册,位置：/websck/babquote 和/sockjs/websck/babquote" );
+    }
+
+    @Bean
+    public WebSocketHandler babQuoteWebSocketHandler(){
+        return new SystemWebSocketHandler();
+    }
+
+}
